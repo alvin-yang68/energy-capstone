@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5432/energy_db
+    username: postgres
+    password: password
+  jpa:
+    # Validate ensures Hibernate validates the DB schema matches entities but doesn't alter it.
+    # We use Flyway for alterations.
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
