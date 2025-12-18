@@ -24,7 +24,7 @@ class CustomerService(
             country = request.country
         )
 
-        val saved = customerRepository.save(entity)
+        val saved = customerRepository.saveAndFlush(entity) // Need to flush so that the timestamps are populated
 
         return CustomerResponse(
             id = saved.id,
