@@ -11,8 +11,12 @@ class TestcontainersConfiguration {
 
     @Bean
     @ServiceConnection
-    fun postgresContainer(): PostgreSQLContainer {
-        return PostgreSQLContainer(DockerImageName.parse("postgres:latest"))
+    fun timescaleContainer(): PostgreSQLContainer {
+        return PostgreSQLContainer(
+            DockerImageName.parse("timescale/timescaledb:latest-pg16").asCompatibleSubstituteFor("postgres")
+        )
+            .withDatabaseName("energy_db")
+            .withUsername("postgres")
+            .withPassword("password")
     }
-
 }
