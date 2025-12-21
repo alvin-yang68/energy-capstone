@@ -21,7 +21,7 @@ data class FlatRateConfiguration(
 
 data class TimeOfUseConfiguration(
     val peakPrice: BigDecimal,
-    val offPeakPriceval: BigDecimal,
+    val offPeakPrice: BigDecimal,
     val peakStart: LocalTime,
     val peakEnd: LocalTime
 ) : RateConfiguration

@@ -40,7 +40,7 @@ class TariffPlanRepositoryTest {
         )
         val newRateConfig = TimeOfUseConfiguration(
             peakPrice = BigDecimal("0.35"),
-            offPeakPriceval = BigDecimal("0.15"),
+            offPeakPrice = BigDecimal("0.15"),
             peakStart = LocalTime.of(18, 30),
             peakEnd = LocalTime.of(22, 0)
         )
