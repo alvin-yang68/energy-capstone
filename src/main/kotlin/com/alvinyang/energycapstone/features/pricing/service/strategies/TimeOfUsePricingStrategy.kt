@@ -36,8 +36,6 @@ class TimeOfUsePricingStrategy : PricingStrategy {
                 readAt.isAfter(config.peakStart) && !readAt.isAfter(config.peakEnd)
             }
 
-            println("[alvin] reading: $reading, readAt: $readAt, isPeak: $isPeak")
-
             val rate = if (isPeak) config.peakPrice else config.offPeakPrice
             totalCost = totalCost.add(reading.kwh.multiply(rate))
         }
