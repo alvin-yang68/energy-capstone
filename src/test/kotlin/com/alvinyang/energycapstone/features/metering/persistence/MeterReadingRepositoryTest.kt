@@ -16,6 +16,7 @@ import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabas
 import org.springframework.context.annotation.Import
 import java.math.BigDecimal
 import java.time.Instant
+import java.time.ZoneId
 
 @DataJpaTest
 @Import(TestcontainersConfiguration::class)
@@ -34,7 +35,12 @@ class MeterReadingRepositoryTest {
     fun `should save and retrieve readings ordered by time`() {
         // 1. Setup Parent Entities
         val customer = customerRepository.save(Customer(name = "Test", email = "t@t.com", country = Country.SG))
-        val site = siteRepository.save(Site(customer = customer, identifier = "M1", country = Country.SG, region = "N"))
+        val site = siteRepository.save(
+            Site(
+                customer = customer, identifier = "M1", country = Country.SG, region = "N",
+                timezone = ZoneId.of("Asia/Singapore"),
+            )
+        )
 
         // 2. Save Readings (Out of order insertion)
         val now = Instant.now()

@@ -29,6 +29,7 @@ class SiteService(
             identifier = request.identifier,
             country = request.country,
             region = request.region,
+            timezone = request.timezone,
             address = request.address,
             customer = customer
         )
@@ -40,6 +41,7 @@ class SiteService(
             customerId = saved.customer.id, // Accessing ID of a LAZY proxy is safe and doesn't trigger a query
             identifier = saved.identifier,
             region = saved.region,
+            timezone = saved.timezone,
             address = saved.address,
             active = saved.active,
             createdAt = saved.createdAt?.toString()

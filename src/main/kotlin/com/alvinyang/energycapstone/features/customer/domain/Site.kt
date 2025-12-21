@@ -5,6 +5,7 @@ import jakarta.persistence.*
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.Instant
+import java.time.ZoneId
 import java.util.*
 
 @Entity
@@ -23,6 +24,9 @@ class Site(
 
     @Column(nullable = false)
     var region: String,
+
+    @Column(name = "timezone", nullable = false)
+    val timezone: ZoneId,
 
     @Column(columnDefinition = "TEXT")
     var address: String? = null,

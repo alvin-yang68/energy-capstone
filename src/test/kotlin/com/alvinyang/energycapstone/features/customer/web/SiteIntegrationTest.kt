@@ -17,6 +17,7 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ProblemDetail
 import org.springframework.test.web.servlet.client.RestTestClient
+import java.time.ZoneId
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureRestTestClient
@@ -48,6 +49,7 @@ class SiteIntegrationTest {
             identifier = "1234567890",
             country = Country.SG,
             region = "SG-NORTH",
+            timezone = ZoneId.of("Asia/Singapore"),
             address = "123 Woodlands Ave"
         )
 
@@ -66,6 +68,7 @@ class SiteIntegrationTest {
 
         val inDb = siteRepository.findById(responseBody.id).orElseThrow()
         assertThat(inDb.address).isEqualTo("123 Woodlands Ave")
+        assertThat(inDb.timezone).isEqualTo(ZoneId.of("Asia/Singapore"))
     }
 
     @Test
@@ -76,6 +79,7 @@ class SiteIntegrationTest {
             identifier = "999999",
             country = Country.AU,
             region = "AU-NSW",
+            timezone = ZoneId.of("Asia/Singapore"),
             address = "Sydney"
         )
 
@@ -108,7 +112,8 @@ class SiteIntegrationTest {
                 customer = customer,
                 identifier = "13579",
                 country = Country.SG,
-                region = "SG-NORTH"
+                region = "SG-NORTH",
+                timezone = ZoneId.of("Asia/Singapore"),
             )
         )
 
@@ -118,6 +123,7 @@ class SiteIntegrationTest {
             identifier = "13579", // Duplicate!
             country = Country.SG,    // Duplicate!
             region = "SG-WEST",
+            timezone = ZoneId.of("Asia/Singapore"),
             address = "Different Address"
         )
 

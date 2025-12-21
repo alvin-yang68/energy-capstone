@@ -2,6 +2,7 @@ package com.alvinyang.energycapstone.features.customer.web
 
 import com.alvinyang.energycapstone.common.domain.Country
 import jakarta.validation.constraints.NotBlank
+import java.time.ZoneId
 import java.util.*
 
 data class CreateSiteRequest(
@@ -15,6 +16,8 @@ data class CreateSiteRequest(
     @field:NotBlank(message = "Region is required")
     val region: String,
 
+    val timezone: ZoneId,
+
     val address: String?
 )
 
@@ -23,6 +26,7 @@ data class SiteResponse(
     val customerId: UUID,
     val identifier: String,
     val region: String,
+    val timezone: ZoneId,
     val address: String?,
     val active: Boolean,
     val createdAt: String

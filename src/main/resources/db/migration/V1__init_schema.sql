@@ -20,6 +20,7 @@ CREATE TABLE site (
     country VARCHAR(2) NOT NULL, -- Denormalized for unique constraint safety
     identifier VARCHAR(50) NOT NULL, -- NMI / MSSL
     region VARCHAR(50) NOT NULL,
+    timezone VARCHAR(50) NOT NULL,  -- `java.time.ZoneId` (e.g., 'Asia/Singapore')
     address TEXT,
     active BOOLEAN DEFAULT TRUE NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
