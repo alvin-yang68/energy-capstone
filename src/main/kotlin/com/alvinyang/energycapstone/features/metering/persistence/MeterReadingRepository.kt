@@ -17,7 +17,7 @@ interface MeterReadingRepository : JpaRepository<MeterReading, MeterReadingKey> 
         FROM MeterReading mr
         WHERE mr.id.siteId = :siteId
             AND mr.id.readAt >= :start
-            AND mr.id.readAt < :end
+            AND mr.id.readAt <= :end
             ORDER BY mr.id.readAt ASC
     """
     )
