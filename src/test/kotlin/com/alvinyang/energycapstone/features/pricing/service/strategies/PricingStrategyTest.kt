@@ -12,13 +12,13 @@ import java.math.BigDecimal
 import java.time.Instant
 import java.time.LocalTime
 import java.time.ZoneId
-import java.util.UUID
+import java.util.*
 
 class PricingStrategyTest {
     @Test
     fun `Flat Strategy calculates total correctly`() {
         val strategy = FlatPricingStrategy()
-        val config = FlatRateConfiguration(pricePerKwh = BigDecimal("0.50"))
+        val configuration = FlatRateConfiguration(pricePerKwh = BigDecimal("0.50"))
 
         val readings = listOf(
             reading("10.0", "2026-01-01T10:00:00Z"),
@@ -26,20 +26,28 @@ class PricingStrategyTest {
         )
 
         // 15 kWh * $0.50 = $7.50
-        val cost = strategy.calculateCost(readings, config, ZoneId.of("UTC"))
+        val lineItem = strategy.calculateLineItem(
+            readings,
+            configuration,
+            description = "Energy Charge",
+            zoneId = ZoneId.of("UTC")
+        )
 
-        assertThat(cost).isEqualByComparingTo("7.50")
+        assertThat(lineItem.amount).isEqualByComparingTo("7.50")
+        assertThat(lineItem.quantity).isEqualByComparingTo("15.00") // Total Usage
+        assertThat(lineItem.rate).isEqualByComparingTo("0.50")      // Unit Price
+        assertThat(lineItem.description).isEqualTo("Energy Charge") // Passthrough
     }
 
     @Test
     fun `TOU Strategy applies peak and off-peak rates correctly`() {
         val strategy = TimeOfUsePricingStrategy()
-        val zone = ZoneId.of("Asia/Singapore")
-        val config = TimeOfUseConfiguration(
+        val zoneId = ZoneId.of("Asia/Singapore")
+        val configuration = TimeOfUseConfiguration(
             peakPrice = BigDecimal("1.00"),
             offPeakPrice = BigDecimal("0.50"),
             // Peak: 12:00 to 14:00
-            peakStart = LocalTime.of(12,0),
+            peakStart = LocalTime.of(12, 0),
             peakEnd = LocalTime.of(14, 0)
         )
 
@@ -57,15 +65,23 @@ class PricingStrategyTest {
             reading("10.0", "2026-01-01T06:30:00Z")  // 14:30 SG
         )
 
+        val lineItem = strategy.calculateLineItem(readings, configuration, description = "TOU Charge", zoneId)
+
         // Math:
         // 12:00 (Off): 10 * 0.50 = 5.0
         // 12:30 (Peak): 10 * 1.00 = 10.0
         // 14:00 (Peak): 10 * 1.00 = 10.0
         // 14:30 (Off): 10 * 0.50 = 5.0
         // Total = 30.00
-        val cost = strategy.calculateCost(readings, config, zone)
+        assertThat(lineItem.amount).isEqualByComparingTo("30.00")
 
-        assertThat(cost).isEqualByComparingTo("30.00")
+        // Total Quantity: 40 kWh
+        assertThat(lineItem.quantity).isEqualByComparingTo("40.00")
+
+        // Rate should be null because it's a mix of $0.50 and $1.00
+        assertThat(lineItem.rate).isNull()
+
+        assertThat(lineItem.description).isEqualTo("TOU Charge")
     }
 
     // Helper to create a dummy reading

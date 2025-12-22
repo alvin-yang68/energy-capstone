@@ -2,24 +2,31 @@ package com.alvinyang.energycapstone.features.pricing.service.strategies
 
 import com.alvinyang.energycapstone.common.domain.RateType
 import com.alvinyang.energycapstone.features.metering.domain.MeterReading
+import com.alvinyang.energycapstone.features.pricing.domain.CalculationLineItem
 import com.alvinyang.energycapstone.features.pricing.domain.RateConfiguration
 import com.alvinyang.energycapstone.features.pricing.domain.TimeOfUseConfiguration
+import org.springframework.stereotype.Component
 import java.math.BigDecimal
 import java.time.ZoneId
 
+@Component
 class TimeOfUsePricingStrategy : PricingStrategy {
     override val supportedType = RateType.TIME_OF_USE
 
-    override fun calculateCost(
+    override fun calculateLineItem(
         readings: List<MeterReading>,
         configuration: RateConfiguration,
+        description: String,
         zoneId: ZoneId
-    ): BigDecimal {
+    ): CalculationLineItem {
         val config = configuration as? TimeOfUseConfiguration
             ?: throw IllegalArgumentException("Invalid config for TOU Strategy")
 
+        var totalKwh = BigDecimal.ZERO
         var totalCost = BigDecimal.ZERO
         for (reading in readings) {
+            totalKwh = totalKwh.add(reading.kwh)
+
             // Convert UTC Instant -> Wall Clock Time (LocalTime) at the Site
             val readAt = reading.id.readAt.atZone(zoneId).toLocalTime()
 
@@ -40,6 +47,11 @@ class TimeOfUsePricingStrategy : PricingStrategy {
             totalCost = totalCost.add(reading.kwh.multiply(rate))
         }
 
-        return totalCost
+        return CalculationLineItem(
+            description,
+            quantity = totalKwh,
+            rate = null,    // Blended rate, so we leave unit price null
+            amount = totalCost
+        )
     }
 }
