@@ -24,21 +24,21 @@ class PricingService(
     // Purely calculation - does not save an invoice.
     // readOnly = true is a performance hint for Hibernate (skips dirty checking).
     @Transactional(readOnly = true)
-    fun calculateDraftInvoice(siteId: UUID, billingStart: Instant, billingEnd: Instant): CalculationResult {
+    fun calculateDraftInvoice(siteId: UUID, billingPeriodStart: Instant, billingPeriodEnd: Instant): CalculationResult {
         // 1. Get Context (Timezone)
         val context =
             siteRepository.findPricingContextById(siteId) ?: throw ResourceNotFoundException("Site $siteId not found")
         val zoneId = context.timezone
 
         // 2. Find all relevant Tariff Plans (Proration Logic)
-        val assignments = assignmentRepository.findOverlappingAssignment(siteId, billingStart, billingEnd)
+        val assignments = assignmentRepository.findOverlappingAssignment(siteId, billingPeriodStart, billingPeriodEnd)
         if (assignments.isEmpty()) {
             // Edge case: No plan
             return CalculationResult(totalAmount = BigDecimal.ZERO, lineItems = emptyList())
         }
 
         // 3. Fetch readings for the entire billing period
-        val allReadings = meterReadingRepository.findBySiteIdAndDateRange(siteId, billingStart, billingEnd)
+        val allReadings = meterReadingRepository.findBySiteIdAndDateRange(siteId, billingPeriodStart, billingPeriodEnd)
 
         var totalAmount = BigDecimal.ZERO
         val allLineItems = mutableListOf<CalculationLineItem>()
@@ -50,10 +50,10 @@ class PricingService(
         for (assignment in assignments) {
             // Calculate the specific window for this plan within the billing period
             // Max(billStart, planStart)
-            val effectiveStart = maxOf(billingStart, assignment.effectiveFrom)
+            val effectiveStart = maxOf(billingPeriodStart, assignment.effectiveFrom)
 
             // Min(billEnd, planEnd) -> handle null effectiveTo as "Infinity"
-            val effectiveEnd = assignment.effectiveTo?.let { minOf(billingEnd, it) } ?: billingEnd
+            val effectiveEnd = assignment.effectiveTo?.let { minOf(billingPeriodEnd, it) } ?: billingPeriodEnd
 
             // Skip if invalid range (shouldn't happen due to query, but safety check)
             if (!effectiveStart.isBefore(effectiveEnd)) continue
