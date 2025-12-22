@@ -11,8 +11,9 @@ interface SiteTariffAssignmentRepository : JpaRepository<SiteTariffAssignment, U
         SELECT sta 
         FROM SiteTariffAssignment sta
         WHERE sta.site.id = :siteId
-            AND sta.effectiveFrom <= :date
-            AND (sta.effectiveTo IS NULL OR sta.effectiveTo >= :date)
+            AND sta.effectiveFrom <= :end
+            AND (sta.effectiveTo IS NULL OR sta.effectiveTo >= :start)
+        ORDER BY sta.effectiveFrom ASC
     """)
-    fun findActiveAssignment(siteId: UUID, date: Instant): SiteTariffAssignment?
+    fun findOverlappingAssignment(siteId: UUID, start: Instant, end: Instant): List<SiteTariffAssignment>
 }
