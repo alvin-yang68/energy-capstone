@@ -78,6 +78,3 @@ CREATE TABLE meter_reading (
 
 -- Convert to Hypertable
 SELECT create_hypertable('meter_reading', 'read_at');
-
--- Index for "Get me all readings for this site" (Most common query)
-CREATE INDEX ix_meter_reading_site_time ON meter_reading (site_id, read_at DESC);
