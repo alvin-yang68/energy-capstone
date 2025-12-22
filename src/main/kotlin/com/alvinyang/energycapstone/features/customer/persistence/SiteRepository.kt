@@ -15,4 +15,6 @@ interface SiteRepository : JpaRepository<Site, UUID> {
     // It checks the constructor properties: 'id', 'timezone'.
     // It generates SQL: SELECT id, timezone FROM site WHERE id = ?
     fun findPricingContextById(id: UUID): SitePricingContext?
+
+    fun findAllByCustomerIdAndActiveTrue(customerId: UUID): List<Site>
 }
