@@ -50,6 +50,7 @@ CREATE TABLE tariff_plan (
 CREATE TABLE tariff_rate (
     id UUID PRIMARY KEY,
     tariff_plan_id UUID NOT NULL REFERENCES tariff_plan(id),
+    description TEXT NOT NULL,
     rate_type VARCHAR(50) NOT NULL,
     configuration JSONB DEFAULT '{}'::jsonb NOT NULL,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,

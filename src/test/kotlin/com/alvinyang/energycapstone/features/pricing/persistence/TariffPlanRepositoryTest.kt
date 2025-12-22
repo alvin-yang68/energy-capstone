@@ -47,7 +47,8 @@ class TariffPlanRepositoryTest {
         val newTariffRate = TariffRate(
             tariffPlan = newTariffPlan,
             rateType = RateType.TIME_OF_USE,
-            configuration = newRateConfig
+            configuration = newRateConfig,
+            description = "TOU Charge"
         )
         newTariffPlan.rates.add(newTariffRate)
 

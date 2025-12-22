@@ -18,6 +18,9 @@ class TariffRate(
     @JoinColumn(name = "tariff_plan_id", nullable = false)
     val tariffPlan: TariffPlan,
 
+    @Column(nullable = false)
+    val description: String,    // e.g. "Base Energy", "Green Add-on", "Network Charge"
+
     @Enumerated(EnumType.STRING)
     @Column(name = "rate_type", nullable = false)
     val rateType: RateType,
