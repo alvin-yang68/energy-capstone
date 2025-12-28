@@ -1,0 +1,100 @@
+### 1. Create Customer
+POST http://localhost:8080/api/customers
+Content-Type: application/json
+
+{
+  "name": "Manual Test User",
+  "email": "manual@test.com",
+  "country": "SG"
+}
+
+> {%
+    client.global.set("customerId", response.body.id);
+    client.log("Created Customer: " + response.body.id);
+%}
+
+### 2. Create Site
+POST http://localhost:8080/api/sites
+Content-Type: application/json
+
+{
+  "customerId": "{{customerId}}",
+  "identifier": "NMI-MANUAL-001",
+  "country": "SG",
+  "region": "SG-NORTH",
+  "timezone": "Asia/Singapore",
+  "address": "123 Manual St"
+}
+
+> {%
+    client.global.set("siteId", response.body.id);
+    client.log("Created Site: " + response.body.id);
+%}
+
+### 3. Create Tariff Plan
+POST http://localhost:8080/api/tariffs
+Content-Type: application/json
+
+{
+  "code": "MANUAL-PLAN",
+  "name": "Manual Testing Plan",
+  "country": "SG",
+  "billingPeriod": "MONTHLY",
+  "rates": [
+    {
+      "rateType": "FLAT",
+      "description": "Base Usage",
+      "configuration": {
+        "type": "FLAT",
+        "pricePerKwh": "0.25"
+      }
+    }
+  ]
+}
+
+> {%
+    client.global.set("planId", response.body.id);
+%}
+
+### 4. Assign Tariff to Site
+POST http://localhost:8080/api/tariffs/assignments
+Content-Type: application/json
+
+{
+  "siteId": "{{siteId}}",
+  "tariffPlanId": "{{planId}}",
+  "effectiveFrom": "2026-01-01T00:00:00Z"
+}
+
+### 5. Bulk Ingest Meter Readings
+POST http://localhost:8080/api/readings/bulk
+Content-Type: application/json
+
+[
+  {
+    "siteId": "{{siteId}}",
+    "readAt": "2026-01-15T12:00:00Z",
+    "kwh": 50.0
+  },
+  {
+    "siteId": "{{siteId}}",
+    "readAt": "2026-01-15T12:30:00Z",
+    "kwh": 50.0
+  }
+]
+
+### 6. PREVIEW INVOICE (The Goal)
+POST http://localhost:8080/api/invoices/preview
+Content-Type: application/json
+
+{
+  "siteId": "{{siteId}}",
+  "start": "2026-01-01T00:00:00Z",
+  "end": "2026-02-01T00:00:00Z"
+}
+
+> {%
+    client.test("Total is correct", () => {
+        client.assert(response.body.totalAmount === 25.0, "Expected $25.00")
+    })
+%}
