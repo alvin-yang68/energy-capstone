@@ -11,6 +11,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
+        jdbc:
+          batch_size: 500 # Group 500 queries into 1 DB network packet
+          order_insert: true
+          order_updates: true
 management:
   endpoints:
     web:
