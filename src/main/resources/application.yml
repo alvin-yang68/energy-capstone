@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5432/energy_db
+    url: jdbc:postgresql://localhost:5432/energy_db?reWriteBatchedInserts=true
     username: postgres
     password: password
   jpa:

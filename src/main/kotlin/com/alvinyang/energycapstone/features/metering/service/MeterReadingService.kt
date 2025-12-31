@@ -32,7 +32,7 @@ class MeterReadingService(
                 null
             } else {
                 MeterReading(
-                    id = MeterReadingKey(siteId = site.id, readAt = request.readAt),
+                    _id = MeterReadingKey(siteId = site.id, readAt = request.readAt),
                     kwh = request.kwh,
                     site = site,
                 )
