@@ -70,6 +70,9 @@ class BillingJob(
                                     billingPeriodStart,
                                     billingPeriodEnd
                                 )
+                            } catch (e: IllegalStateException) {
+                                // Expected behavior for re-runs
+                                logger.info("Skipping customer ${customer.id}: ${e.message}")
                             } catch (e: Exception) {
                                 // Log but don't crash the whole job
                                 logger.error("Failed to bill customer ${customer.id}: ${e.message}")
