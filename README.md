@@ -87,6 +87,9 @@ Prerequisites: Docker and JDK 21+.
 4.  Trigger Billing Job:
     The job runs automatically on schedule (cron), or you can modify the cron expression in `BillingJob.kt` to run it immediately.
 
+**Manual Testing:**
+An IntelliJ HTTP Request file is included at `http/manual-test.http` for stepping through the full customer lifecycle (Create -> Ingest -> Preview Bill) without using the GUI.
+
 ## API Documentation
 
 Once the application is running, you can explore and test the endpoints interactively via Swagger UI.
