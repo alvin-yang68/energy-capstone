@@ -87,6 +87,15 @@ Prerequisites: Docker and JDK 21+.
 4.  Trigger Billing Job:
     The job runs automatically on schedule (cron), or you can modify the cron expression in `BillingJob.kt` to run it immediately.
 
+## API Documentation
+
+Once the application is running, you can explore and test the endpoints interactively via Swagger UI.
+
+*   **Interactive UI:** [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+*   **OpenAPI Spec (JSON):** [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+
+The API documentation is auto-generated from the Kotlin code using `springdoc-openapi`.
+
 ## Performance Benchmarks
 
 Tested on a local development machine:
